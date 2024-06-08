@@ -1,0 +1,77 @@
+page.module.css
+.dumbPlaceholderRule {
+  color:black;
+}
+
+.bonheurlogo {
+  color: #ef09099b; /* Example color */
+  position: absolute;
+  top: 5%; /* Position the top of the logo at the vertical center of the page */
+  left: 50%; /* Position the left side of the logo at the horizontal center of the page */
+  transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+  font-size: 40px;
+}
+
+.emailText {
+    color: black; /* Example color */
+    position: absolute;
+    top: 35%; /* Position the top of the logo at the vertical center of the page */
+    left: 45%; /* Position the left side of the logo at the horizontal center of the page */
+    transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+  }
+
+.usernameText {
+  color: black; /* Example color */
+  position: absolute;
+  top: 40%; /* Position the top of the logo at the vertical center of the page */
+  left: 45%; /* Position the left side of the logo at the horizontal center of the page */
+  transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+}
+.passwordText {
+  color: black; /* Example color */
+  position: absolute;
+  top: 45%; /* Position the top of the logo at the vertical center of the page */
+  left: 45%; /* Position the left side of the logo at the horizontal center of the page */
+  transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+}
+
+.emailBox {
+    color: black; /* Example color */
+    position: absolute;
+    top: 35%; /* Position the top of the logo at the vertical center of the page */
+    left: 55%; /* Position the left side of the logo at the horizontal center of the page */
+    transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+  }
+.usernameBox {
+  color: black; /* Example color */
+  position: absolute;
+  top: 40%; /* Position the top of the logo at the vertical center of the page */
+  left: 55%; /* Position the left side of the logo at the horizontal center of the page */
+  transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+}
+.passwordBox {
+  color: black; /* Example color */
+  position: absolute;
+  top: 45%; /* Position the top of the logo at the vertical center of the page */
+  left: 55%; /* Position the left side of the logo at the horizontal center of the page */
+  transform: translate(-50%, -50%); /* Adjust the logo's position to center it precisely */
+}
+
+.loginButton {
+  width: 150px; /* Adjust width as needed */
+  height: 40px; /* Adjust height as needed */
+  background-color: #ffffff; /* White color */
+  border: 1px solid #000000; /* Black border, adjust thickness as needed */
+  font-family: 'Lobster', cursive; /* Replace 'Cursive Font' with the name of the romantic font */
+  /* Add any other styles you want */
+  cursor: pointer; /* Change cursor to a pointer when hovering */
+
+
+  position: absolute;
+  top: 53%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

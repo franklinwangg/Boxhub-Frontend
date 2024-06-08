@@ -1,0 +1,2 @@
+fix up the frontend appearance
+then if clayton's still stuck on the database, try to help him

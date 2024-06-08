@@ -1,0 +1,80 @@
+page.module.css
+.dumbPlaceholderRule {
+  color:black;
+}
+
+/* YourStyles.module.css */
+
+.aboutUsContainer {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .header {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align : center;
+  }
+  
+  .paragraphContainer {
+    /* Center align the content within the container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .paragraphText {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+    margin-bottom: 15px; /* Add space between paragraphs */
+  }
+
+  /* YourStyles.module.css */
+
+.aboutUsContainer {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: center; /* Center-align content */
+}
+
+.header {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.paragraphContainer {
+  margin-bottom: 20px;
+}
+
+.additionalContent {
+  display: flex;
+  justify-content: space-between;
+}
+
+.box {
+  width: 45%; /* Adjust width of each box */
+  padding: 20px;
+  border: 2px solid #007bff; /* Border style (solid) and color (blue) */
+  border-radius: 8px;
+  background-color: #fff; /* Background color of the box */
+}
+
+.box h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.box p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333; /* Text color */
+}

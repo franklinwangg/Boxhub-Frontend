@@ -1,1 +1,7 @@
-redirect user to homepage after a successful login
+have every new post have an id attached to it
+
+create server endpoint for "get(post)"
+
+
+turn each post into a clickable link
+have each post be visible, and have at least the title and submit comment box

@@ -1,1 +1,15 @@
+get rid of the "boxing-forum" thing
+
+
+make reply button functionality for comments
+
+add a "comment-level" property to the comments
+
+first look for comments that have no parents, lay them all out (and take them out the list)
+
+
+
+
 create replies to comments
+
+so each comment will have an attribute of "parentComment", and thus will be nested under the parentComment

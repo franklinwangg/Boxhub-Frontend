@@ -1,18 +1,1 @@
-have the username show up above every post
-
-
-
-
-
-
-
-
-make the comments load right away
-
-
-
-
-
-
-
-create upvote button on comments
+create replies to comments

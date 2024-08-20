@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const scheduler = require("./webscraper/scheduler");
 
-const { MongoClient, ObjectId } = require('mongodb'); 
+const { MongoClient, ObjectId } = require('mongodb');
 
 const bodyParser = require("body-parser");
 const app = express();
@@ -22,7 +22,7 @@ async function startServer() {
         console.log("Connected to MongoDB");
 
         const db = client.db("boxing-forum");
-        
+
         scheduler.runScheduler();
 
         // Routes
@@ -51,18 +51,18 @@ async function startServer() {
                 const registeredUsers = await db.collection("registered-users").find({}).toArray();
                 const user = registeredUsers.find(user => user.username === username);
 
-                if(user === null) {
+                if (user === null) {
                     console.log("user is null");
                 }
 
-                if(user && user.password === password) {
+                if (user && user.password === password) {
                     console.log("success");
-                    res.status(200).json({ success: true});
+                    res.status(200).json({ success: true });
                 }
                 else {
                     console.log("failure");
 
-                    res.status(200).json({ success: false});
+                    res.status(200).json({ success: false });
                 }
             } catch (error) {
                 console.log("Error authentificating user:", error);
@@ -70,20 +70,20 @@ async function startServer() {
             }
         });
 
-        app.post("/createPost", async(req, res) => {
+        app.post("/createPost", async (req, res) => {
             const { title, description } = req.body;
             const posts = await db.collection("posts").insertOne({ title, description });
 
         });
 
-        app.get("/posts", async(req, res) => {
+        app.get("/posts", async (req, res) => {
             const posts = db.collection("posts");
             const allPosts = await posts.find().toArray();
             res.json(allPosts);
         });
 
-        app.get("/post/:id", async(req, res) => {
-            try{
+        app.get("/post/:id", async (req, res) => {
+            try {
                 const postId = req.params.id;
                 const post = await db.collection('posts').findOne({ _id: new ObjectId(postId) });
 
@@ -91,41 +91,69 @@ async function startServer() {
                     return res.status(404).send('Post not found');
                 }
 
-                const comments = await db.collection("comments").find({post: new ObjectId(postId)}).toArray();
+                const comments = await db.collection("comments").find({ post: new ObjectId(postId) }).toArray();
 
-                res.json({post, comments});
-                
+                res.json({ post, comments });
+
             }
-            catch(error) {
+            catch (error) {
                 console.log("Error : ", error);
             }
         });
 
-        app.post("/postComment", async(req, res) => {
-            const { author, comment, idOfParentPost } = req.body;
+        app.post("/post/:id/:commentId", async (req, res) => {
+            //http://localhost:3001/post/66b3325ee60478ece541889f/66c021661f3c47d01065eb71
+
+            const { author, comment, idOfParentPost, level, idOfParentComment } = req.body;
+
 
             const now = new Date();
 
             // Format the date to include only month, day, year, and time (hh:mm)
             const formattedDate = now.toLocaleString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: true // or false for 24-hour format
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true // or false for 24-hour format
             });
 
-            await db.collection("comments").insertOne({ author, comment, idOfParentPost,   
-                createdAt: formattedDate
+
+            await db.collection("comments").insertOne({
+                author, comment, idOfParentPost,
+                level, idOfParentComment, createdAt: formattedDate
+            });
+        });
+
+        app.post("/postComment", async (req, res) => {
+            const { author, comment, idOfParentPost, level } = req.body;
+
+            const now = new Date();
+
+            // Format the date to include only month, day, year, and time (hh:mm)
+            const formattedDate = now.toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true // or false for 24-hour format
             });
 
-            
+            const idOfParentComment = null;
+
+            await db.collection("comments").insertOne({
+                author, comment, idOfParentPost,
+                level, idOfParentComment, createdAt: formattedDate
+            });
+
+
         });
 
         app.get("/post/:id/comments", async (req, res) => {
             const postId = req.params.id;
-            const comments = await db.collection("comments").find({idOfParentPost : postId}).toArray();
+            const comments = await db.collection("comments").find({ idOfParentPost: postId }).toArray();
 
             res.json(comments);
 

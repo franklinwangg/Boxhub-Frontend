@@ -1,0 +1,36 @@
+    const renderEachLevel = (levelArrays, currentComment, level) => {
+        // for every element in L0
+        // renderComment(postId, level) {}
+
+        for (let i = 0; i < levelArrays.length; i++) {
+            const temp = [];
+            renderComment(currentComment);
+
+            if (i === levelArrays.length - 1) { // don't need this?
+                return;
+            }
+            else {
+
+                // find all child comments in next levels array
+                for (let j = 0; j < levelArrays[i + 1].length; j++) {
+
+                    if (levelArrays[i + 1][j].parentCommentId === currentComment.postId) {
+                        temp.push(levelArrays[i + 1]);
+                    }
+                }
+
+                // recursively render all of the children
+                for (let k = 0; k < temp.length; k++) {
+                    renderEachLevel(levelArrays, temp[k], level + 1);
+                }
+            }
+        }
+
+        // 1) render itself
+
+        // 2) make empty array
+        // 3) go through next level array and add any posts whose parentComment matches postId to array
+        // 4) for every element in array : 
+        // 5) renderComment(postId, level + 1)
+
+    };

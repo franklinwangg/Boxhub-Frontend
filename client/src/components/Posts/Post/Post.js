@@ -110,12 +110,13 @@ const Post = () => {
 
     const renderEachLevel = (levelArrays, currentComment, level) => {
 
+        console.log("STARTED");
+
         const renderedComments = [];
         const temp = [];
         // render itself
 
         renderedComments.push(renderComment(currentComment));
-        // renderComment(currentComment);
 
         // if comment is on last level of levelArrays, we need to stop it cuz otherwise will 
         // trigger outOfBounds error
@@ -127,7 +128,13 @@ const Post = () => {
             // find all matching child comments in next level
             for (let i = 0; i < levelArrays[level + 1].length; i++) {
 
-                if (levelArrays[level + 1][i].parentCommentId === currentComment.postId) { // parentCommentId undefined?
+                if (levelArrays[level + 1][i].idOfParentComment === currentComment._id) { // parentCommentId undefined?
+
+                    // maybe print out levelArrays?
+                    console.log("current comment : ", levelArrays[level + 1][i].comment);
+                    console.log("child's parent comment id : ", levelArrays[level + 1][i].idOfParentComment);
+                    console.log("current comment contents : ", currentComment);
+                    console.log("current comment id : ", currentComment._id);
 
                     temp.push(levelArrays[level + 1][i]);
                 }
@@ -178,16 +185,17 @@ const Post = () => {
 
 
             for (let i = 0; i < levelArrays[0].length; i++) {
+                console.log("i ", i);
+                console.log("element at i : ", levelArrays[0][i].comment);
                 const arrayOfRecursiveElementsHTML = renderEachLevel(levelArrays, levelArrays[0][i], 0);
-                console.log("1");
-                for(let i = 0; i < arrayOfRecursiveElementsHTML.length; i ++) {
-                    overallRenderedComments.push(arrayOfRecursiveElementsHTML[i]);
-                    console.log("pushed");
+                console.log("LENGTH : ", arrayOfRecursiveElementsHTML.length);
+                for(let j = 0; j < arrayOfRecursiveElementsHTML.length; j ++) {
+                    console.log("i : ", i, ", j : ", j, " element : ", arrayOfRecursiveElementsHTML[j]);
+                    overallRenderedComments.push(arrayOfRecursiveElementsHTML[j]);
                 }
 
                 // renderEachLevel(levelArrays, levelArrays[0][i], 0);
             }
-            console.log("overallRenderedComments undefined? ", (overallRenderedComments === undefined));
             return overallRenderedComments;
         }
     }
@@ -204,16 +212,7 @@ const Post = () => {
                 placeholder="Post comment here" onChange={changeCommentToPost}></input>
             <button id="submit-comment-button" onClick={handleSubmitCommentButton}>Submit</button>
 
-
-            {/* <div id="comments-section">
-                {comments.map((comment) => {
-                    return renderComment(comment);
-                })}
-            </div> */}
-
             <div className="comments-section">
-                {/* {renderComments()} */}
-                {/* {isReadyToRender ? renderComments() : <p>Loading comments...</p>} */}
                 {isReadyToRender ? renderComments() : <p>Loading comments...</p>}
 
 

@@ -1,1 +1,1 @@
-replies only load after you refresh page
+make the comment box disappear when you click away

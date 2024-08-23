@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import "./Comment.css";
 import { useLocation } from 'react-router-dom';
 
@@ -15,8 +15,22 @@ const Comment = (props) => {
     const { username, setUsername } = useContext(UserContext);
     const location = useLocation();
 
+    const replyBoxRef = useRef(null); 
 
 
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (replyBoxRef.current && !replyBoxRef.current.contains(event.target)) {
+                setShowReplyButton(false); // Hide reply box when clicking outside
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const changeReplyCommentToPost = (event) => {
         setReplyCommentToPost(event.target.value);
@@ -72,7 +86,7 @@ const Comment = (props) => {
             </div>
 
 
-            <div className="reply-section">
+            <div className="reply-section"  ref={replyBoxRef}>
                 {showReplyButton && (
                     <div>
                         <input

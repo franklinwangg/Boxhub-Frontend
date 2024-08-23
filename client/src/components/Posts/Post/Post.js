@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import Comment from '../Comment/Comment';
 import UserContext from '../../../context/UserContext';
+import "./Post.css";
 
 
 const Post = () => {

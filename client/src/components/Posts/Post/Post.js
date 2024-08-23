@@ -13,15 +13,11 @@ const Post = () => {
     const [commentToPost, setCommentToPost] = useState("");
     const [isReadyToRender, setIsReadyToRender] = useState(false);
 
-
-
-
     useEffect(() => {
         const fetchAndSortComments = async () => {
             const fetchedComments = await fetchComments();
             const sortedComments = sortCommentsOnLevel(fetchedComments);
             setComments(sortedComments);
-
         };
 
         fetchAndSortComments();
@@ -29,26 +25,37 @@ const Post = () => {
         setIsReadyToRender(true);
     }, []);
 
+    const handleReplySubmission = async () => {
+        const fetchedComments = await fetchComments();
+        setComments(fetchedComments);
 
-    const handleSubmitCommentButton = () => {
+    };
+
+    const handleSubmitCommentButton = async () => {
 
         const author = username;
-
         const comment = commentToPost;
         const idOfParentPost = location.state._id;
 
-
-
-        fetch("http://localhost:3001/postComment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                author: author,
-                comment: comment,
-                idOfParentPost: idOfParentPost,
-                level: 0
-            })
-        });
+        try {
+            await fetch("http://localhost:3001/postComment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    author: author,
+                    comment: comment,
+                    idOfParentPost: idOfParentPost,
+                    level: 0
+                })
+            });
+    
+            const fetchedComments = await fetchComments();
+            setComments(fetchedComments);
+            setCommentToPost("");
+        }
+        catch(error) {
+            console.log("uh oh! error is ", error);
+        }
 
     };
 
@@ -110,8 +117,6 @@ const Post = () => {
 
     const renderEachLevel = (levelArrays, currentComment, level) => {
 
-        console.log("STARTED");
-
         const renderedComments = [];
         const temp = [];
         // render itself
@@ -130,29 +135,22 @@ const Post = () => {
 
                 if (levelArrays[level + 1][i].idOfParentComment === currentComment._id) { // parentCommentId undefined?
 
-                    // maybe print out levelArrays?
-                    console.log("current comment : ", levelArrays[level + 1][i].comment);
-                    console.log("child's parent comment id : ", levelArrays[level + 1][i].idOfParentComment);
-                    console.log("current comment contents : ", currentComment);
-                    console.log("current comment id : ", currentComment._id);
-
                     temp.push(levelArrays[level + 1][i]);
+
                 }
             }
 
             // render all of its child comments
-            for (let k = 0; k < temp.length; k++) {
 
-                const renderedLevel = renderEachLevel(levelArrays, temp[k], level + 1);
-                for(let l = 0; l < renderedLevel.length; l ++) {
-                    renderedComments.push(renderedLevel[l]);
+            for(let i = 0; i < temp.length; i ++) {
+                const arrayOfChildElementsHTML = renderEachLevel(levelArrays, temp[i], level + 1);
+                for(let j = 0; j < arrayOfChildElementsHTML.length; j ++) {
+                    renderedComments.push(arrayOfChildElementsHTML[j]);
                 }
-
-                return renderedComments;
-                // renderEachLevel(levelArrays, temp[k], level + 1);
             }
 
             // if no children, then return renderedComments
+
             return renderedComments;
         }
 
@@ -169,7 +167,8 @@ const Post = () => {
 
         return (
             // <Comment />
-            <Comment post={location.state._id} author={comment.author} comment={comment.comment} level={comment.level} id={comment._id} />
+            <Comment post={location.state._id} author={comment.author} comment={comment.comment} level={comment.level} id={comment._id} 
+            handleReplySubmission = {handleReplySubmission}/>
 
         );
 
@@ -177,7 +176,7 @@ const Post = () => {
 
     const renderComments = () => {
         if (comments.length === 0) {
-            console.log("no comments available to render yet");
+            // console.log("no comments available to render yet");
         }
         else {
             const overallRenderedComments = [];
@@ -185,17 +184,14 @@ const Post = () => {
 
 
             for (let i = 0; i < levelArrays[0].length; i++) {
-                console.log("i ", i);
-                console.log("element at i : ", levelArrays[0][i].comment);
                 const arrayOfRecursiveElementsHTML = renderEachLevel(levelArrays, levelArrays[0][i], 0);
-                console.log("LENGTH : ", arrayOfRecursiveElementsHTML.length);
-                for(let j = 0; j < arrayOfRecursiveElementsHTML.length; j ++) {
-                    console.log("i : ", i, ", j : ", j, " element : ", arrayOfRecursiveElementsHTML[j]);
-                    overallRenderedComments.push(arrayOfRecursiveElementsHTML[j]);
+                for (let j = 0; j < arrayOfRecursiveElementsHTML.length; j++) {
+                    overallRenderedComments.push(
+                        React.cloneElement(arrayOfRecursiveElementsHTML[j], { key: arrayOfRecursiveElementsHTML[j].props.id })
+                    );
                 }
-
-                // renderEachLevel(levelArrays, levelArrays[0][i], 0);
             }
+
             return overallRenderedComments;
         }
     }
@@ -214,11 +210,10 @@ const Post = () => {
 
             <div className="comments-section">
                 {isReadyToRender ? renderComments() : <p>Loading comments...</p>}
-
-
             </div>
         </div>
     );
+    
 }
 
 export default Post;

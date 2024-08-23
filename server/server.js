@@ -10,7 +10,18 @@ const port = 3001;
 
 
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
+app.use(express.json()); // Using express.json() instead of body-parser
+
+// CORS configuration to whitelist your client
+const corsOptions = {
+    origin: 'http://localhost:3000', // Only allow requests from this origin
+    methods: ['GET,POST,PUT,DELETE'],  // Specify allowed HTTP methods
+    credentials: true                // Allow credentials (e.g., cookies, authorization headers)
+};
+
+app.use(cors(corsOptions));  // Apply CORS options
+
 
 const uri = "mongodb+srv://franklinnnwang:strongpassword123@cluster0.4bwh8vj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
@@ -36,7 +47,6 @@ async function startServer() {
                 const result = await db.collection("registered-users").insertOne({ username, password });
 
                 console.log("User added successfully");
-                console.log("end");
             } catch (error) {
                 console.log("Error adding user:", error);
                 res.status(500).send(error);
@@ -101,11 +111,12 @@ async function startServer() {
             }
         });
 
+
+        // for replies to comments
         app.post("/post/:id/:commentId", async (req, res) => {
             //http://localhost:3001/post/66b3325ee60478ece541889f/66c021661f3c47d01065eb71
 
             const { author, comment, idOfParentPost, level, idOfParentComment } = req.body;
-
 
             const now = new Date();
 
@@ -120,10 +131,20 @@ async function startServer() {
             });
 
 
-            await db.collection("comments").insertOne({
-                author, comment, idOfParentPost,
-                level, idOfParentComment, createdAt: formattedDate
-            });
+            try {
+
+                await db.collection("comments").insertOne({ // problem here?
+                    author, comment, idOfParentPost,
+                    level, idOfParentComment, createdAt: formattedDate
+                });
+                res.status(201).json({ success: true, message: 'Comment added successfully' });
+
+            }
+            catch (error) {
+                console.log("Error : ", error);
+                res.status(500).json({ success: false, message: 'Error adding comment' });
+
+            }
         });
 
         app.post("/postComment", async (req, res) => {
@@ -141,6 +162,7 @@ async function startServer() {
                 hour12: true // or false for 24-hour format
             });
 
+
             const idOfParentComment = null;
 
             await db.collection("comments").insertOne({
@@ -148,7 +170,7 @@ async function startServer() {
                 level, idOfParentComment, createdAt: formattedDate
             });
 
-
+            res.status(200).json({ success: true, message: 'Comment posted successfully' });
         });
 
         app.get("/post/:id/comments", async (req, res) => {

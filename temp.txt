@@ -1,36 +1,38 @@
-    const renderEachLevel = (levelArrays, currentComment, level) => {
-        // for every element in L0
-        // renderComment(postId, level) {}
+    const handleClickSubmitReplyButton = async (post) => {
+        const postId = props.post;
+        const commentId = props.id;
 
-        for (let i = 0; i < levelArrays.length; i++) {
-            const temp = [];
-            renderComment(currentComment);
+        try {
+            console.log("0");
+            console.log("username ", username); // change it to username
+            const response = await fetch(`http://localhost:3001/post/${postId}/${commentId}`, {
+                //http://localhost:3001/post/66b3325ee60478ece541889f/66c641c82426a949c4d7c132
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    author: username,
+                    comment: replyCommentToPost,
+                    parentPost: props.parentPost,
+                    idOfParentPost: props.post,
+                    level: props.level + 1,
+                    idOfParentComment: props.id,
+                }),
+            });
 
-            if (i === levelArrays.length - 1) { // don't need this?
-                return;
+            console.log("0.5");
+            if (response.ok) {
+                console.log("1");
+                setReplyCommentToPost(""); // Clear input after successful post
+                const originalPost = props.post;
+                originalPost.handleReplySubmission();
+                setReplyCommentToPost("");
+
+            } else {
+                console.error("Failed to post reply");
             }
-            else {
-
-                // find all child comments in next levels array
-                for (let j = 0; j < levelArrays[i + 1].length; j++) {
-
-                    if (levelArrays[i + 1][j].parentCommentId === currentComment.postId) {
-                        temp.push(levelArrays[i + 1]);
-                    }
-                }
-
-                // recursively render all of the children
-                for (let k = 0; k < temp.length; k++) {
-                    renderEachLevel(levelArrays, temp[k], level + 1);
-                }
-            }
+        } catch (error) {
+            console.error("Error posting reply:", error);
         }
-
-        // 1) render itself
-
-        // 2) make empty array
-        // 3) go through next level array and add any posts whose parentComment matches postId to array
-        // 4) for every element in array : 
-        // 5) renderComment(postId, level + 1)
-
     };

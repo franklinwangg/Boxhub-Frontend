@@ -7,7 +7,10 @@ const skySportsUrl = 'https://www.skysports.com/boxing';
 const getArticlesFromOneDayAgoFromSkySports = async () => {
 
   try {
+    console.log("1");
     const response = await axios.get(skySportsUrl);
+
+    console.log("2");
 
     const $ = cheerio.load(response.data);
 

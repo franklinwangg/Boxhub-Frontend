@@ -19,7 +19,6 @@ function Homepage() {
                 const fetchedPosts = await fetch("http://localhost:3001/posts");
                 if (fetchedPosts.ok) {
                     const fetchedPostsJson = await fetchedPosts.json();
-                    // const fetchedPostsArray = fetchedPostsJson.toArray();
                     setPosts(fetchedPostsJson);
                 }
                 else {

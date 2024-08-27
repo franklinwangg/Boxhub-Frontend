@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-// import { UserContext } from '../../../context/UserContext';
 import UserContext from '../../../context/UserContext';
 import "./Login.css";
 
@@ -17,16 +16,17 @@ function Login() {
 
         try {
 
-
-            const response = await fetch("http://localhost:3001/login", {
+            console.log("enteredPassword", enteredPassword);
+            const response = await fetch("http://localhost:5000/api/users/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    username: enteredUsername,
-                    password: enteredPassword
-                }) 
+                    username : enteredUsername,
+                    password : enteredPassword,
+                })
             });
 
+            console.log("printed");
             const responseJSON = await response.json();
 
             if (responseJSON.success === true) {
@@ -39,6 +39,27 @@ function Login() {
             } else {
                 console.log("login failed");
             }
+
+            // const response = await fetch("http://localhost:5000/api/users/", {
+            //     method: "GET",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({
+                    
+            //     })
+            // });
+
+            // const responseJSON = await response.json();
+
+            // if (responseJSON.success === true) {
+
+            //     console.log("enteredUsername is ", enteredUsername);
+            //     setUsername(enteredUsername);
+
+            //     console.log("username is now ", username);
+            //     navigate("/homepage");
+            // } else {
+            //     console.log("login failed");
+            // }
         } catch (error) {
             console.error("Error during login:", error);
         }

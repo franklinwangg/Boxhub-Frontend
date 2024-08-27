@@ -1,1 +1,1 @@
-make the comment box disappear when you click away
+make homepage work with postgresql

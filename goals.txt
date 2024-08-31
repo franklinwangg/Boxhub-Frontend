@@ -1,1 +1,5 @@
-make homepage work with postgresql
+recreate postRoutes
+
+then recreate Homepage
+
+make posts display on homepage

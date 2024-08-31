@@ -10,6 +10,7 @@ const port = 3001;
 
 
 app.use(bodyParser.json());
+// app.use(cors());
 app.use(express.json()); // Using express.json() instead of body-parser
 
 // CORS configuration to whitelist your client
@@ -36,7 +37,7 @@ async function startServer() {
         scheduler.runScheduler();
 
         // Routes
-//
+
         app.post("/register", async (req, res) => {
 
             const { username, password } = req.body;
@@ -51,8 +52,6 @@ async function startServer() {
                 res.status(500).send(error);
             }
         });
-
-        
 
         app.post("/login", async (req, res) => {
 

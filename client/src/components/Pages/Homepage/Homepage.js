@@ -16,10 +16,16 @@ function Homepage() {
         const fetchPosts = async () => {
             try {
 
-                const fetchedPosts = await fetch("http://localhost:3001/posts");
+                // const response = await fetch("http://localhost:5000/api/users/login", {
+
+
+                const fetchedPosts = await fetch("http://localhost:5000/api/posts/");
                 if (fetchedPosts.ok) {
                     const fetchedPostsJson = await fetchedPosts.json();
-                    setPosts(fetchedPostsJson);
+                    console.log("FETCHED ", fetchedPostsJson);
+
+                    setPosts(fetchedPostsJson.rows);
+
                 }
                 else {
                     console.log("fetched posts not ok");
@@ -49,22 +55,22 @@ function Homepage() {
                 Create New Post
             </button>
             <h1 id="recent-boxing-news">Recent Boxing News</h1>
-    
+
             <div className="posts-container">
                 {posts.map((post) => (
-                    <div className="post" key={post._id}>
+                    <div className="post" key={post.id}> {/* Ensure post.id is unique */}
                         <h2>
-                            <Link to={`/post/${post._id}`} state={{ _id: post._id, title: post.title, description: post.description }}>
+                            <Link to={`/post/${post.id}`} state={{ id: post.id, title: post.title, description: post.description }}>
                                 {post.title}
                             </Link>
                         </h2>
-                        <p>{post.description}</p>
+                        <p>{post.content}</p>
                     </div>
                 ))}
             </div>
         </div>
     );
-    
+
 }
 
 export default Homepage;

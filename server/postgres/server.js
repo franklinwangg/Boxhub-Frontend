@@ -32,17 +32,16 @@ client.connect()
 
 app.use(cors(corsOptions));  // Apply CORS options
 
-console.log("using postgres server");
-
-
-// app.use("/api/users", userRoutes);
-// app.use("/api/comments", commentRoutes);
-// app.use("/api/posts", postRoutes);
-
 app.use("/api/users", (req, res, next) => {
     req.client = client; // Attach the client to the request object
     next(); // Call the next middleware
 }, userRoutes);
+
+app.use("/api/posts", (req, res, next) => {
+    console.log("posts used");
+    req.client = client; // Attach the client to the request object
+    next(); // Call the next middleware
+}, postRoutes);
 
 
 const PORT = process.env.PORT || 5000;
@@ -50,4 +49,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-

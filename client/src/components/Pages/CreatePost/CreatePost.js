@@ -11,7 +11,8 @@ function CreatePost() {
 
     const handleCreatePostButtonClick = () => {
 
-        fetch("http://localhost:3001/createPost", {
+        console.log("1");
+        fetch("http://localhost:5000/api/posts/createPost", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -19,6 +20,8 @@ function CreatePost() {
                 description: description
             })
         })
+        console.log("2");
+
     };
 
     const changeTitle = (event) => {

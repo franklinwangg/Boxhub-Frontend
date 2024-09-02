@@ -15,7 +15,7 @@ const Comment = (props) => {
     const { username, setUsername } = useContext(UserContext);
     const location = useLocation();
 
-    const replyBoxRef = useRef(null); 
+    const replyBoxRef = useRef(null);
 
 
 
@@ -42,15 +42,18 @@ const Comment = (props) => {
 
     const handleReplySubmission = () => {
         // Call the passed function
+
         props.handleReplySubmission();
     };
 
     const handleClickSubmitReplyButton = async (post) => {
+        // print post?
         const postId = props.post;
         const commentId = props.id;
 
         try {
-            const response = await fetch(`http://localhost:3001/post/${postId}/${commentId}`, {
+            const response = await fetch(`http://localhost:5000/api/comments/${postId}/${commentId}`, {
+
                 //http://localhost:3001/post/66b3325ee60478ece541889f/66c641c82426a949c4d7c132
                 method: "POST",
                 headers: {
@@ -70,6 +73,7 @@ const Comment = (props) => {
                 handleReplySubmission();
                 setReplyCommentToPost("");
 
+
             } else {
                 console.error("Failed to post reply");
             }
@@ -86,7 +90,7 @@ const Comment = (props) => {
             </div>
 
 
-            <div className="reply-section"  ref={replyBoxRef}>
+            <div className="reply-section" ref={replyBoxRef}>
                 {showReplyButton && (
                     <div>
                         <input
@@ -97,9 +101,13 @@ const Comment = (props) => {
                             onChange={changeReplyCommentToPost}
                         />
 
-                        <button className="submit-reply-button" onClick={handleClickSubmitReplyButton}>
+                        {/* <button className="submit-reply-button" onClick={handleClickSubmitReplyButton}>
+                            Submit
+                        </button> */}
+                        <button className="submit-reply-button" onClick={() => handleClickSubmitReplyButton()}>
                             Submit
                         </button>
+
                     </div>
                 )
                 }

@@ -7,13 +7,29 @@ const bcrypt = require('bcrypt');
 
 router.get("/", async (req, res) => {
     try {
-
-        console.log("1");
         const result = await req.client.query("SELECT * FROM posts");
         res.status(200).json(result);
 
     }
     catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+router.post("/createPost", async(req, res) => {
+    try {
+        console.log("1");
+        const title = req.body.title;
+        const description = req.body.description;
+        
+        const result = await req.client.query("INSERT INTO posts(title, content) VALUES ($1, $2)", [title, description]);
+        console.log("2");
+        res.status(200).json(result);
+
+
+    }
+    catch(error) {
         console.error(error.message);
         res.status(500).send("Server Error");
     }

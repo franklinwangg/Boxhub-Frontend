@@ -38,11 +38,14 @@ app.use("/api/users", (req, res, next) => {
 }, userRoutes);
 
 app.use("/api/posts", (req, res, next) => {
-    console.log("posts used");
     req.client = client; // Attach the client to the request object
     next(); // Call the next middleware
 }, postRoutes);
 
+app.use("/api/comments", (req, res, next) => {
+    req.client = client; // Attach the client to the request object
+    next(); // Call the next middleware
+}, commentRoutes);
 
 const PORT = process.env.PORT || 5000;
 

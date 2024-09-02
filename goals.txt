@@ -1,5 +1,12 @@
-recreate postRoutes
+get author recognized
 
-then recreate Homepage
+make all the starter comments' parent id's null
 
-make posts display on homepage
+get comments working
+
+possible source of error : <Comment post={location.state._id} author={comment.author} 
+    comment={comment.content} level={comment.level} id={comment.id} 
+
+ignore the fact that all the id's are singular numbers, just get the Posts working first
+
+get Post working

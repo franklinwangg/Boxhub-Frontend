@@ -17,18 +17,22 @@ const Post = () => {
     useEffect(() => {
         const fetchAndSortComments = async () => {
             const fetchedComments = await fetchComments();
-            const sortedComments = sortCommentsOnLevel(fetchedComments);
+            const fetchedCommentsJson = fetchedComments.rows;
+
+            const sortedComments = sortCommentsOnLevel(fetchedCommentsJson); // fetchedComments is not an array, it's an object
             setComments(sortedComments);
         };
 
         fetchAndSortComments();
 
+        
         setIsReadyToRender(true);
     }, []);
 
     const handleReplySubmission = async () => {
+        
         const fetchedComments = await fetchComments();
-        setComments(fetchedComments);
+        setComments(fetchedComments.rows);
 
     };
 
@@ -36,10 +40,10 @@ const Post = () => {
 
         const author = username;
         const comment = commentToPost;
-        const idOfParentPost = location.state._id;
+        const idOfParentPost = location.state.id;
 
         try {
-            await fetch("http://localhost:3001/postComment", {
+            await fetch(`http://localhost:5000/api/comments/${idOfParentPost}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -51,7 +55,8 @@ const Post = () => {
             });
     
             const fetchedComments = await fetchComments();
-            setComments(fetchedComments);
+
+            setComments(fetchedComments.rows);
             setCommentToPost("");
         }
         catch(error) {
@@ -66,9 +71,9 @@ const Post = () => {
 
     const fetchComments = async () => {
         try {
-            const postId = location.state._id;
+            const postId = location.state.id;
+            const response = await fetch(`http://localhost:5000/api/comments/${postId}`); 
 
-            const response = await fetch(`http://localhost:3001/post/${postId}/comments`);
             const data = await response.json();
             return data;
         }
@@ -79,6 +84,11 @@ const Post = () => {
 
     const sortCommentsOnLevel = (dataComments) => {
         // sort the comments on order, so all 0's in front, then 1's, etc
+
+        if(dataComments.length === 0) {
+            return dataComments;
+        }
+
         const sortedDataComments = dataComments.sort((firstComment, secondComment) => {
             if (firstComment.level > secondComment.level) {
                 return 1;
@@ -93,11 +103,14 @@ const Post = () => {
 
     const divideCommentsIntoLevelArrays = () => {
         // first, separate comments into new Level arrays - one array for all Level0's, another for Level1's, etc
+
+        // why does dCILA get called again when button is clicked?
         const levelArrays = [];
         var currLevel = 0;
-        while (true) {
 
-            const temp = comments.filter((comment) => {
+        while (true) {
+            
+            const temp = comments.filter((comment) => { // comments isn't an array yet
                 return comment.level === currLevel;
             });
             if (temp.length === 0) {
@@ -133,9 +146,7 @@ const Post = () => {
         else {
             // find all matching child comments in next level
             for (let i = 0; i < levelArrays[level + 1].length; i++) {
-
-                if (levelArrays[level + 1][i].idOfParentComment === currentComment._id) { // parentCommentId undefined?
-
+                if (levelArrays[level + 1][i].parent_comment_id == currentComment.id) { // parentCommentId undefined?
                     temp.push(levelArrays[level + 1][i]);
 
                 }
@@ -168,11 +179,10 @@ const Post = () => {
 
         return (
             // <Comment />
-            <Comment post={location.state._id} author={comment.author} comment={comment.comment} level={comment.level} id={comment._id} 
+            <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id} 
             handleReplySubmission = {handleReplySubmission}/>
-
+            
         );
-
     };
 
     const renderComments = () => {
@@ -181,9 +191,8 @@ const Post = () => {
         }
         else {
             const overallRenderedComments = [];
-            const levelArrays = divideCommentsIntoLevelArrays();
-
-
+            const levelArrays = divideCommentsIntoLevelArrays(); // not an array
+            
             for (let i = 0; i < levelArrays[0].length; i++) {
                 const arrayOfRecursiveElementsHTML = renderEachLevel(levelArrays, levelArrays[0][i], 0);
                 for (let j = 0; j < arrayOfRecursiveElementsHTML.length; j++) {

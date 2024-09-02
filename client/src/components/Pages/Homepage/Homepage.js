@@ -57,16 +57,19 @@ function Homepage() {
             <h1 id="recent-boxing-news">Recent Boxing News</h1>
 
             <div className="posts-container">
-                {posts.map((post) => (
-                    <div className="post" key={post.id}> {/* Ensure post.id is unique */}
-                        <h2>
-                            <Link to={`/post/${post.id}`} state={{ id: post.id, title: post.title, description: post.description }}>
-                                {post.title}
-                            </Link>
-                        </h2>
-                        <p>{post.content}</p>
-                    </div>
-                ))}
+                {posts.map((post) => {
+                    return (
+                        <div className="post" key={post.id}> {/* Ensure post.id is unique */}
+                            <h2>
+                                <Link to={`/post/${post.id}`} state={{ id: post.id, title: post.title, description: post.description }}>
+                                    {post.title}
+                                </Link>
+                            </h2>
+                            <p>{post.content}</p>
+                        </div>
+                    );
+                })}
+
             </div>
         </div>
     );

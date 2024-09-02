@@ -85,6 +85,8 @@ const Comment = (props) => {
     return (
         <div className="comment-container" style={{ marginLeft: props.level * 20 + 'px' }}>
             <div className="comment-box">
+            {/* <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id} 
+            handleReplySubmission = {handleReplySubmission}/> */}
                 <div className="comment-author">Author: {props.author}</div>
                 <div className="comment-contents">{props.comment}</div>
             </div>

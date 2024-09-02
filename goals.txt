@@ -1,4 +1,4 @@
-get author recognized
+put the author tag onto replies as well
 
 make all the starter comments' parent id's null
 

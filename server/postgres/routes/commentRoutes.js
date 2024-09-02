@@ -26,7 +26,7 @@ router.post("/:postId", async (req, res) => {
 
         console.log("1");
         const postId = req.params.postId; // postId not passed in?
-        const username = req.body.username;
+        const username = req.body.author;
         const comment = req.body.comment;
         const level = req.body.level;
         
@@ -56,7 +56,7 @@ router.post("/:postId/:commentId", async (req, res) => {
         console.log("1");
         const postId = req.params.postId;
         const commentId = req.params.commentId;
-        const username = req.body.username;
+        const username = req.body.author;
         const comment = req.body.comment;
         const level = req.body.level;
  

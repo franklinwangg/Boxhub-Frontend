@@ -42,6 +42,8 @@ const Post = () => {
         const comment = commentToPost;
         const idOfParentPost = location.state.id;
 
+        console.log("AUTHOR : ", author);
+
         try {
             await fetch(`http://localhost:5000/api/comments/${idOfParentPost}`, {
                 method: "POST",

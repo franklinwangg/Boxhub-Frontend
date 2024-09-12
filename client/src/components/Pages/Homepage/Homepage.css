@@ -8,7 +8,7 @@ body {
 }
 
 #go-to-create-new-post-page-button {
-    background-color: #007BFF;
+    background-color: #0a0a0a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -22,7 +22,7 @@ body {
 }
 
 #go-to-create-new-post-page-button:hover {
-    background-color: #0056b3;
+    background-color: #252626;
 }
 
 #recent-boxing-news {
@@ -54,7 +54,7 @@ body {
 .post h2 {
     margin: 0 0 10px;
     font-size: 20px;
-    color: #007BFF;
+    color: #0d0d0e;
 }
 
 .post p {
@@ -86,3 +86,47 @@ body {
         font-size: 14px;
     }
 }
+
+
+#upper-logo-bar {
+    display: flex;
+    position: relative;
+    width: 100%;         /* Full width */
+    height: 50px;        /* Height of the stripe */
+    background-color: rgb(175, 36, 36); /* Red background */
+    z-index: 1000;       /* Ensure it stays above other content */
+    justify-content: space-between;    /* Distribute space between children */
+    align-items: center;  /* Vertically center the flex items */
+    padding-top: 0px;
+}
+
+#upper-logo-bar > div:first-child {
+    margin-left: 20%;    /* Start 20% from the left */
+}
+
+#upper-logo-bar > div:last-child {
+    margin-right: 40px;  /* Add small margin on the right to avoid overflow */
+}
+
+
+#upper-logo-bar > div {
+    top:10px;
+    margin : 0px;
+    color:white;
+    font-size: 10px;
+}
+  
+  #upper-empty-column {
+    width: 100%;          /* Full width */
+    height: 100px;       /* Height of the empty column (adjust as needed) */
+    background-color: transparent; /* No background color */
+  }
+  
+  #person-icon {
+    width : 25px;
+    height : 25px;
+  }
+
+  #username-text {
+    font-size : 20px;
+  }

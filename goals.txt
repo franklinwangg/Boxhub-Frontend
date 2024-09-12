@@ -1,12 +1,1 @@
-put the author tag onto replies as well
-
-make all the starter comments' parent id's null
-
-get comments working
-
-possible source of error : <Comment post={location.state._id} author={comment.author} 
-    comment={comment.content} level={comment.level} id={comment.id} 
-
-ignore the fact that all the id's are singular numbers, just get the Posts working first
-
-get Post working
+make the inserted file into boxhub-images work as intended

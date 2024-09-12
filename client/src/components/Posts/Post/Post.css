@@ -1,16 +1,16 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
+    background-color: #fff;
     margin: 0;
     padding: 0;
 }
 
-#post-title-and-description-section {
+#post-title-and-content-section {
     background-color: #fff;
     padding: 20px;
     margin: 20px auto;
     max-width: 800px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgba(252, 251, 251, 0.1);
     border-radius: 8px;
 }
 
@@ -21,10 +21,22 @@ body {
     color: #333;
 }
 
-#post-description-div {
+#post-content-div {
     font-size: 18px;
     color: #555;
+    max-width: 800px; /* Limits the width of the content */
+    margin: 0 auto; /* Centers the content horizontally */
+    padding: 0; /* Removes padding to allow text to start on the left */
+    line-height: 1.6; /* Improves readability */
+    white-space: pre-wrap; /* Preserves spaces and line breaks */
 }
+
+#post-content-div p {
+    margin: 1em 0; /* Adds space between paragraphs */
+    text-indent: 20px; /* Indents the first line of each paragraph */
+}
+
+
 
 #post-new-comment-box {
     width: calc(100% - 20px);
@@ -38,7 +50,7 @@ body {
 
 #submit-comment-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: rgb(175, 36, 36);
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -80,7 +92,7 @@ body {
     color: #333;
 }
 
-#post-title-and-description-section {
+#post-title-and-content-section {
     background-color: #f8f9fa; /* Light grey background */
     padding: 20px;
     border-radius: 10px;
@@ -92,12 +104,49 @@ body {
 #post-title-div {
     font-size: 2rem; /* Larger font size for the title */
     font-weight: bold; /* Bold font weight */
-    color: #1984ef; /* Dark grey text color */
+    color: #0a0a0a; /* Dark grey text color */
     margin-bottom: 10px;
 }
 
-#post-description-div {
-    font-size: 1.2rem; /* Medium font size for the description */
+#post-content-div {
+    font-size: 1.2rem; /* Medium font size for the content */
     color: #6c757d; /* Lighter grey text color */
     margin-top: 10px;
+}
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #000;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Add this CSS for the highlight effect */
+.highlight {
+    background-color: lightblue;
+    animation: fadeHighlight 2s forwards;
+  }
+  
+  @keyframes fadeHighlight {
+    0% {
+      background-color: lightblue;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  
+#comments-section-title {
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    border-radius: 8px;
 }

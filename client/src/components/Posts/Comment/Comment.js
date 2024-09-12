@@ -37,7 +37,12 @@ const Comment = (props) => {
     };
 
     const handleClickReplyButton = () => {
-        setShowReplyButton(true);
+        if(username == null) {
+
+        }
+        else {
+            setShowReplyButton(true);
+        }
     };
 
     const handleReplySubmission = () => {
@@ -53,8 +58,6 @@ const Comment = (props) => {
 
         try {
             const response = await fetch(`http://localhost:5000/api/comments/${postId}/${commentId}`, {
-
-                //http://localhost:3001/post/66b3325ee60478ece541889f/66c641c82426a949c4d7c132
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,9 +88,11 @@ const Comment = (props) => {
     return (
         <div className="comment-container" style={{ marginLeft: props.level * 20 + 'px' }}>
             <div className="comment-box">
-            {/* <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id} 
-            handleReplySubmission = {handleReplySubmission}/> */}
-                <div className="comment-author">Author: {props.author}</div>
+
+                <div className="comment-author">    {props.author ? props.author.toUpperCase() : 'Anonymous'}
+                </div>
+
+
                 <div className="comment-contents">{props.comment}</div>
             </div>
 
@@ -107,7 +112,9 @@ const Comment = (props) => {
                             Submit
                         </button> */}
                         <button className="submit-reply-button" onClick={() => handleClickSubmitReplyButton()}>
+                            <span className="reply-arrow">&#x21B5;</span>
                             Submit
+
                         </button>
 
                     </div>
@@ -116,6 +123,7 @@ const Comment = (props) => {
 
                 {!showReplyButton && (
                     <button className="reply-button" onClick={handleClickReplyButton}>
+                        <span className="reply-arrow">&#x21B5;</span>
                         Reply
                     </button>
                 )}

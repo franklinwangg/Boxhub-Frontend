@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./CreatePost.css";
 
 import { Link } from 'react-router-dom';
@@ -7,29 +7,58 @@ import { Link } from 'react-router-dom';
 function CreatePost() {
 
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [content, setcontent] = useState("");
+    const [image, setImage] = useState(null);
+
+    useEffect(() => {
+        // This will run every time `image` is updated
+        if (image) {
+            console.log("final image : ", image);
+            // You can perform other actions based on the updated image here
+        }
+    }, [image]);
+
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
 
     const handleCreatePostButtonClick = () => {
 
-        console.log("1");
+        const formData = new FormData();
+        console.log("title : ", title);
+        console.log("content : ", content);
+        formData.append("title", title);
+        formData.append("content", content);
+
+        if (image) {
+            formData.append("image", image); // Append the image file
+        }
+
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
         fetch("http://localhost:5000/api/posts/createPost", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                title: title,
-                description: description
-            })
+            body: formData,
         })
-        console.log("2");
-
     };
 
     const changeTitle = (event) => {
         setTitle(event.target.value);
     };
-    const changeDescription = (event) => {
-        setDescription(event.target.value);
+    const changecontent = (event) => {
+        setcontent(event.target.value);
     };
+
+    function adjustHeight(event) {
+        const textarea = event.target;
+        textarea.style.height = 'auto'; // Reset height
+        textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
+    }
+
+
 
     return (
         <div className="container">
@@ -38,11 +67,16 @@ function CreatePost() {
                 placeholder="Title"
                 onChange={changeTitle}
             ></input>
-            <input
-                id="create-new-post-optional-description-input"
-                placeholder="Optional Description"
-                onChange={changeDescription}
-            ></input>
+            <textarea
+                id="create-new-post-content-input"
+                placeholder="Content"
+                onChange={changecontent}
+                onInput={adjustHeight}
+            ></textarea>
+            <input type="file" id="image-input" accept="image/*" onChange={handleImageChange} required>
+
+            </input>
+
             <button
                 id="create-new-post-submit-button"
                 onClick={handleCreatePostButtonClick}
@@ -51,7 +85,7 @@ function CreatePost() {
             </button>
         </div>
     );
-    
+
 }
 
 export default CreatePost;

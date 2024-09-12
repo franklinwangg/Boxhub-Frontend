@@ -35,7 +35,7 @@ function Login() {
                 setUsername(enteredUsername);
 
                 console.log("username is now ", username);
-                navigate("/homepage");
+                navigate("/");
             } else {
                 console.log("login failed");
             }

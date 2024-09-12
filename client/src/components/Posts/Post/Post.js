@@ -9,10 +9,14 @@ const Post = () => {
 
     const location = useLocation();
     const [comments, setComments] = useState([]);
+    const [articleContent, setArticleContent] = useState([]);
+    const [articleImage, setArticleImage] = useState([]);
 
     const { username, setUsername } = useContext(UserContext);
     const [commentToPost, setCommentToPost] = useState("");
     const [isReadyToRender, setIsReadyToRender] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    
 
     useEffect(() => {
         const fetchAndSortComments = async () => {
@@ -25,12 +29,17 @@ const Post = () => {
 
         fetchAndSortComments();
 
-        
+
         setIsReadyToRender(true);
+
+        console.log("a");
+        fetchArticle();
+        console.log("1");
+
     }, []);
 
     const handleReplySubmission = async () => {
-        
+
         const fetchedComments = await fetchComments();
         setComments(fetchedComments.rows);
 
@@ -38,33 +47,54 @@ const Post = () => {
 
     const handleSubmitCommentButton = async () => {
 
-        const author = username;
-        const comment = commentToPost;
-        const idOfParentPost = location.state.id;
+        if (username == null) {
 
-        console.log("AUTHOR : ", author);
-
-        try {
-            await fetch(`http://localhost:5000/api/comments/${idOfParentPost}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    author: author,
-                    comment: comment,
-                    idOfParentPost: idOfParentPost,
-                    level: 0
-                })
-            });
-    
-            const fetchedComments = await fetchComments();
-
-            setComments(fetchedComments.rows);
-            setCommentToPost("");
         }
-        catch(error) {
-            console.log("uh oh! error is ", error);
-        }
+        else {
 
+            const author = username;
+            const comment = commentToPost;
+            const idOfParentPost = location.state.id;
+
+            setIsLoading(true);
+            try {
+                await fetch(`http://localhost:5000/api/comments/${idOfParentPost}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        author: author,
+                        comment: comment,
+                        idOfParentPost: idOfParentPost,
+                        level: 0
+                    })
+                });
+
+                const fetchedComments = await fetchComments();
+
+                // while we await it, have the button turn grey, and have a little swirling loading sign replace the text on the button
+                setComments(fetchedComments.rows);
+                setCommentToPost("");
+            }
+            catch (error) {
+                console.log("uh oh! error is ", error);
+            }
+            finally {
+                // setIsLoading(false);
+                setTimeout(() => {
+                    setIsLoading(false);
+
+                    const newCommentElement = document.getElementById('new-comment');
+                    if (newCommentElement) {
+                        newCommentElement.scrollIntoView({ behavior: 'smooth' });
+
+                        // Add the highlight class for the fade effect
+                        newCommentElement.classList.add('highlight');
+                    }
+                }, 1000);
+
+
+            }
+        }
     };
 
     const changeCommentToPost = (event) => {
@@ -74,7 +104,7 @@ const Post = () => {
     const fetchComments = async () => {
         try {
             const postId = location.state.id;
-            const response = await fetch(`http://localhost:5000/api/comments/${postId}`); 
+            const response = await fetch(`http://localhost:5000/api/comments/${postId}`);
 
             const data = await response.json();
             return data;
@@ -87,7 +117,7 @@ const Post = () => {
     const sortCommentsOnLevel = (dataComments) => {
         // sort the comments on order, so all 0's in front, then 1's, etc
 
-        if(dataComments.length === 0) {
+        if (dataComments.length === 0) {
             return dataComments;
         }
 
@@ -111,7 +141,7 @@ const Post = () => {
         var currLevel = 0;
 
         while (true) {
-            
+
             const temp = comments.filter((comment) => { // comments isn't an array yet
                 return comment.level === currLevel;
             });
@@ -156,9 +186,9 @@ const Post = () => {
 
             // render all of its child comments
 
-            for(let i = 0; i < temp.length; i ++) {
+            for (let i = 0; i < temp.length; i++) {
                 const arrayOfChildElementsHTML = renderEachLevel(levelArrays, temp[i], level + 1);
-                for(let j = 0; j < arrayOfChildElementsHTML.length; j ++) {
+                for (let j = 0; j < arrayOfChildElementsHTML.length; j++) {
                     renderedComments.push(arrayOfChildElementsHTML[j]);
                 }
             }
@@ -181,9 +211,12 @@ const Post = () => {
 
         return (
             // <Comment />
-            <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id} 
-            handleReplySubmission = {handleReplySubmission}/>
-            
+            // id={index === comments.length - 1 ? "new-comment" : null} 
+
+            <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id}
+                handleReplySubmission={handleReplySubmission} />
+
+
         );
     };
 
@@ -192,9 +225,10 @@ const Post = () => {
             // console.log("no comments available to render yet");
         }
         else {
+
             const overallRenderedComments = [];
             const levelArrays = divideCommentsIntoLevelArrays(); // not an array
-            
+
             for (let i = 0; i < levelArrays[0].length; i++) {
                 const arrayOfRecursiveElementsHTML = renderEachLevel(levelArrays, levelArrays[0][i], 0);
                 for (let j = 0; j < arrayOfRecursiveElementsHTML.length; j++) {
@@ -208,24 +242,67 @@ const Post = () => {
         }
     }
 
+    const fetchArticle = async () => {
+        const response1 = await fetch(location.state.article_url);
+        const articleContents = await response1.json();
+
+        setArticleContent(articleContents.content);
+
+        const response2 = await fetch(location.state.article_url);
+        const articleImages = await response2.json();
+
+        setArticleImage(articleImages.content);
+
+    };
+
     return (
         <div>
-
-            <div id="post-title-and-description-section">
+            <div id="post-title-and-content-section">
                 <div id="post-title-div">{location.state.title}</div>
-                <div id="post-description-div">{location.state.description}</div>
+                <div id="post-image-div">
+                    {articleImage == null ? (
+                        <div></div>
+                    ) : (
+                        <div>{articleImage}</div>
+                    )}
+                </div>
+                <div id="post-content-div">
+                    {articleContent == null ? (
+                        <div></div>
+                    ) : (
+                        <div>{articleContent}</div>
+                    )}
+                </div>
             </div>
 
             <input type="text" id="post-new-comment-box" value={commentToPost}
                 placeholder="Post comment here" onChange={changeCommentToPost}></input>
-            <button id="submit-comment-button" onClick={handleSubmitCommentButton}>Submit</button>
+            <button id="submit-comment-button" onClick={handleSubmitCommentButton}>
+                {isLoading ?
+                    (<div className="spinner"></div>)
+                    : (<div>
+                        Submit
+                    </div>)}
+            </button>
+
+            <div id="comments-section-title">All Comments : {comments.length}</div>
 
             <div className="comments-section">
                 {isReadyToRender ? renderComments() : <p>Loading comments...</p>}
+
+                {/* {comments.map((comment, index) => (
+                    <div
+                        key={comment.id}
+                        id={index === comments.length - 1 ? "new-comment" : null} 
+                        className="comment"
+                    >
+                        {comment.content}
+                    </div>
+                ))} */}
             </div>
         </div>
     );
-    
+
 }
 
 export default Post;

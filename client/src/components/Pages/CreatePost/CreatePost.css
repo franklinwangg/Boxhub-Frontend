@@ -8,7 +8,7 @@ body {
 }
 
 #create-new-post-title-input,
-#create-new-post-optional-description-input {
+#create-new-post-content-input {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -16,6 +16,10 @@ body {
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 16px;
+
+    overflow-y: auto; /* Allow vertical scrolling if needed */
+    white-space: pre-wrap; /* Allow text to wrap onto the next line */
+    resize: vertical; /* Allow users to resize the textarea vertically */
 }
 
 #create-new-post-title-input {
@@ -25,10 +29,7 @@ body {
     color: #333;
 }
 
-#create-new-post-optional-description-input {
-    font-size: 16px;
-    color: #555;
-}
+
 
 #create-new-post-submit-button {
     background-color: #007BFF;
@@ -57,7 +58,7 @@ body {
 
 @media (max-width: 600px) {
     #create-new-post-title-input,
-    #create-new-post-optional-description-input,
+    #create-new-post-content-input,
     #create-new-post-submit-button {
         font-size: 14px;
     }

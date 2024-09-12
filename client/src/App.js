@@ -6,9 +6,17 @@ import Register from './components/UserAuthentification/Register/Register'; // A
 import Homepage from './components/Pages/Homepage/Homepage';
 import CreatePost from './components/Pages/CreatePost/CreatePost';
 import Post from './components/Posts/Post/Post';
+import HeaderBar from './components/Others/HeaderBar';
 
 // import {UserProvider } from './context/UserContext';
 import UserProvider from './context/UserProvider';
+
+const LayoutWithHeader = ({ children }) => (
+  <>
+    <HeaderBar /> {/* This will render above the specific routes */}
+    {children}
+  </>
+);
 
 function App() {
 
@@ -16,11 +24,31 @@ function App() {
     <Router>
       <UserProvider>
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* <Route path="/" element={<Login />} /> */}
+
           <Route path="/register" element={<Register />} />
-          <Route path="/homepage" element={<Homepage />} />
+          {/* <Route path="/homepage" element={<Homepage />} /> */}
+          <Route path="/login" element={<Login />} />
+
           <Route path="/createPost" element={<CreatePost />} />
-          <Route path="/post/:id" element={<Post />} />
+
+          {/* Routes with HeaderBar */}
+          <Route
+            path="/"
+            element={
+              <LayoutWithHeader>
+                <Homepage />
+              </LayoutWithHeader>
+            }
+          />
+          <Route
+            path="/post/:id"
+            element={
+              <LayoutWithHeader>
+                <Post />
+              </LayoutWithHeader>
+            }
+          />
 
         </Routes>
       </UserProvider>

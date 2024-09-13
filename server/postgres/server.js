@@ -10,6 +10,10 @@ const { S3, PutObjectCommand } = require('@aws-sdk/client-s3'); // For AWS SDK v
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 
+const PORT = process.env.PORT || 5000;
+
+let imageUpload = multer({ storage: multer.memoryStorage() });
+
 const s3 = new S3({
     region: 'us-west-1',
     credentials: {
@@ -18,28 +22,9 @@ const s3 = new S3({
     },
 });
 
-let imageUpload;
-
-try {
-    // change the name of the postId later?
-    imageUpload = multer({
-        storage: multerS3({
-          s3: s3,  // Initialize S3 outside of the request
-          bucket: 'boxhub-images',
-          acl: 'bucket-owner-full-control',
-          key: (req, file, cb) => {
-            const postId = req.body.postId || 'test';  // Ensure postId exists
-            cb(null, `${postId}`);  // Generate unique filename
-          },
-        }),
-        limits: { fileSize: 1024 * 1024 * 5 },  // 5MB limit for testing
-      });
-}
-catch(error) {
-    console.log("ERROR : ", error);
-}
-
 const app = express();
+let postIdVar = 0;
+let titleVar = "";
 
 app.use(express.json());
 
@@ -74,12 +59,92 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/users", userRoutes);
-// app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 
-app.post("/api/posts/dummyPost", async(req, res) => {
-    
+app.post("/api/posts/createPostTitleAndContent", async (req, res) => {
+
+    try {
+        const title = req.body.title;
+        const content = req.body.content;
+
+        // 1) insert title into postgreSQL table
+        const insertResult = await client.query("INSERT INTO posts(title) VALUES ($1) RETURNING id", [title]);
+        postId = insertResult.rows[0].id;
+        postIdVar = postId;
+        titleVar = title;
+
+        // 2) initialize imageUpload with postId name
+        imageUpload = multer({
+            storage: multerS3({
+                s3: s3,  
+                bucket: 'boxhub-images',
+                acl: 'bucket-owner-full-control',
+                key: (req, file, cb) => {
+                    const postId = req.body.postId || 'test';  
+                    cb(null, `${postId}`);  
+                },
+            }),
+            limits: { fileSize: 1024 * 1024 * 5 },  // 5MB limit for testing
+        });
+
+        // 3) insert content into boxhub-articles table
+        const articleData = {
+            content: content,
+            postId: postId,
+        }
+
+        const articleParams = {
+            Bucket: "boxhub-articles",
+            Key: `${postId}.json`,
+            ACL: 'bucket-owner-full-control', 
+            Body: JSON.stringify(articleData),
+            ContentType: "application/json"
+        };
+
+        const articleS3Response = await s3.send(new PutObjectCommand(articleParams));
+
+        // 4) post url to postgres table
+        const articleUrl = `https://boxhub-articles.s3.us-west-1.amazonaws.com/${postId}.json`;
+
+        await client.query("UPDATE posts SET article_url = $1 WHERE title = $2", [articleUrl, title]);
+        res.status(200).json({ success: true });
+
+    }
+    catch (error) {
+
+        console.log("Error : ", error);
+        res.status(500).json({ success: false });
+
+    }
 });
+
+app.post("/api/posts/createPostImage", imageUpload.single("image"), async (req, res) => {
+    // 4) image should already be uploaded, now just insert image url onto postgresql table
+
+    try {
+
+        const image = req.file;
+        console.log("req.file : ", image);
+
+        await s3.send(new PutObjectCommand({
+            Bucket: "boxhub-images",
+            Key: `${postIdVar}`,  // Use postId as the key (filename)
+            Body: req.file.buffer,    // Use the buffer from req.file
+            ACL: 'bucket-owner-full-control',
+            ContentType: req.file.mimetype,
+        }));
+
+        const image_url = `https://boxhub-images.s3.us-west-1.amazonaws.com/${postIdVar}`;
+        await client.query("UPDATE posts SET image_url = $1 WHERE title = $2", [image_url, titleVar]);
+
+        res.status(200).json({ success: true });
+    }
+    catch (error) {
+        console.log("Error : ", error);
+    }
+
+});
+
 
 // postRoutes stuff 
 app.get("/api/posts/", async (req, res) => {
@@ -95,50 +160,16 @@ app.get("/api/posts/", async (req, res) => {
 });
 
 app.post("/api/posts/createPost", imageUpload.single("image"), async (req, res) => {
-    // 1) insert title into postgresql database, get the postId number
 
-    const title = req.body.title;
-    const content = req.body.content;
-    const image = req.file;
-
-    const insertResult = await client.query("INSERT INTO posts(title) VALUES ($1) RETURNING id", [title]);
-    const postId = insertResult.rows[0].id;
-
-    // 2) Insert the image URL (from S3) into PostgreSQL
-    const imageUrl = image.location;  // S3 URL of the uploaded image
-    await client.query(
-        "UPDATE posts SET image_url = $1 WHERE id = $2",
-        [imageUrl, postId]
-    );
-
-    // 2) insert article into S3 with the postId number, get the url
-    const articleBucketName = "boxhub-articles";
-
-    const articleData = {
-        content: content,
-        postId: postId,
-    }
-
-    const articleParams = {
-        Bucket: articleBucketName,
-        Key: `${postId}.json`,
-        ACL: 'bucket-owner-full-control', // Grants full control to the bucket owner
-        Body: JSON.stringify(articleData),
-        ContentType: "application/json"
-    };
-
-    // const articleS3Response = await s3.upload(articleParams).promise();
-    const articleS3Response = await s3.send(new PutObjectCommand(articleParams));
-
-    // 3) insert article url into postgresql database
-    await client.query("UPDATE posts SET article_url = $1 WHERE id = $2", [articleS3Response.Location, postId]);
+    // 1) have endpoint post into postgresql database
+    // 2) use that postId to create multer instance
+    // 3) use multer instance to post stuff to database
 
 });
 
 
 
 
-const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

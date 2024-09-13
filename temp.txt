@@ -1,22 +1,21 @@
-
-router.post("/createPost", imageUpload, async (req, res) => {
+app.post("/api/posts/createPost", imageUpload.single("image"), async (req, res) => {
     // 1) insert title into postgresql database, get the postId number
 
     const title = req.body.title;
     const content = req.body.content;
     const image = req.file;
 
-    console.log("a");
-    console.log("title is ", title);
-    console.log("req : ", req.body);
-    console.log("image file shouldb e here: ", image);
-    const insertResult = await req.client.query("INSERT INTO posts(title) VALUES ($1) RETURNING id", [title]);
+    const insertResult = await client.query("INSERT INTO posts(title) VALUES ($1) RETURNING id", [title]);
     const postId = insertResult.rows[0].id;
 
+    // 2) Insert the image URL (from S3) into PostgreSQL
+    const imageUrl = image.location;  // S3 URL of the uploaded image
+    await client.query(
+        "UPDATE posts SET image_url = $1 WHERE id = $2",
+        [imageUrl, postId]
+    );
 
     // 2) insert article into S3 with the postId number, get the url
-    console.log("b");
-
     const articleBucketName = "boxhub-articles";
 
     const articleData = {
@@ -32,68 +31,10 @@ router.post("/createPost", imageUpload, async (req, res) => {
         ContentType: "application/json"
     };
 
-    const articleS3Response = await req.s3.upload(articleParams).promise();
+    // const articleS3Response = await s3.upload(articleParams).promise();
+    const articleS3Response = await s3.send(new PutObjectCommand(articleParams));
 
     // 3) insert article url into postgresql database
+    await client.query("UPDATE posts SET article_url = $1 WHERE id = $2", [articleS3Response.Location, postId]);
 
-    await req.client.query("UPDATE posts SET article_url = $1 WHERE id = $2", [articleS3Response.Location, postId]);
-
-
-    // 4) insert image into S3 with the postId number, get the url
-
-    // 4) set up multer inside the route for image upload using req.s3
-    const imageUpload = multer({
-        storage: multerS3({
-            s3: req.s3,
-            bucket: 'boxhub_images', // Your S3 bucket name
-            acl: 'bucket-owner-full-control', // Set the ACL if needed
-            metadata: (req, file, cb) => {
-                cb(null, { fieldName: file.fieldname });
-            },
-            key: (req, file, cb) => {
-                cb(null, `boxhub_images/${postId}`); // File name in S3
-            },
-        }),
-    }).single("image");
-
-    imageUpload(req, res, (err) => {
-        if (err instanceof multer.MulterError) {
-          // Handle Multer-specific errors
-          return res.status(500).json({ message: 'Multer Error: ' + err.message });
-        } else if (err) {
-          // Handle other errors
-          return res.status(500).json({ message: 'Error: ' + err.message });
-        }
-    
-        // Log the uploaded file data
-        console.log(req.file);
-    
-        res.status(200).json({ message: 'File uploaded successfully!' });
-      });
-
-    // 5) call the multer upload function
-    imageUpload(req, res, async function (error) {
-        if (error) {
-            console.error("Multer Error : ", error);
-            return res.status(500).json({ error: "File upload error" });
-        }
-
-        // 6) access the uploaded image from req.file
-        const imageUrl = req.file.location;
-
-        // 7) update postgreSQL with image URL
-        await req.client.query(
-            "UPDATE posts SET image_url = $1 WHERE id = $2",
-            [imageUrl, postId]
-        );
-
-        // Final response
-        res.json({
-            message: "Post created successfully",
-            postId: postId,
-            articleUrl: articleUrl,
-            imageUrl: imageUrl
-        });
-
-    });
 });

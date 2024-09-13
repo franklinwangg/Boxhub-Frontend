@@ -14,7 +14,6 @@ function CreatePost() {
         // This will run every time `image` is updated
         if (image) {
             console.log("final image : ", image);
-            // You can perform other actions based on the updated image here
         }
     }, [image]);
 
@@ -23,26 +22,41 @@ function CreatePost() {
     };
 
 
-    const handleCreatePostButtonClick = () => {
+    const handleCreatePostButtonClick = async () => {
+        // two fetch methods?
+        // first fetch method 1) sends in the title and content to database, 2) initializes the multer instance
+        console.log("starteD");
+        await fetch("http://localhost:5000/api/posts/createPostTitleAndContent", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+            })
+        })
 
+
+        console.log("finished?");
         const formData = new FormData();
-        console.log("title : ", title);
-        console.log("content : ", content);
-        formData.append("title", title);
-        formData.append("content", content);
 
         if (image) {
+            console.log("yes image : ", image);
             formData.append("image", image); // Append the image file
         }
-
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
+        else {
+            console.log("no image");
         }
 
-        fetch("http://localhost:5000/api/posts/createPost", {
+        console.log("FORM DATA : ", formData);
+        // second fetch method uploads the image using the multer instance
+        await fetch("http://localhost:5000/api/posts/createPostImage", {
             method: "POST",
             body: formData,
         })
+
+
     };
 
     const changeTitle = (event) => {

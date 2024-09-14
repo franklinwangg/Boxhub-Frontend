@@ -28,14 +28,9 @@ const Post = () => {
         };
 
         fetchAndSortComments();
-
-
         setIsReadyToRender(true);
 
-        console.log("a");
         fetchArticle();
-        console.log("1");
-
     }, []);
 
     const handleReplySubmission = async () => {
@@ -248,11 +243,17 @@ const Post = () => {
 
         setArticleContent(articleContents.content);
 
-        const response2 = await fetch(location.state.article_url);
-        const articleImages = await response2.json();
+        const response2 = await fetch(location.state.image_url);
+        console.log("LOCATION STATE URL ", location.state.image_url);
+        const articleImageBlob = await response2.blob();
+        console.log("articleImage : ", articleImage);
 
-        setArticleImage(articleImages.content);
+        const articleImageUrl = URL.createObjectURL(articleImageBlob);
 
+
+        setArticleImage(articleImageUrl);
+        
+        console.log("finished");
     };
 
     return (
@@ -263,7 +264,7 @@ const Post = () => {
                     {articleImage == null ? (
                         <div></div>
                     ) : (
-                        <div>{articleImage}</div>
+                        <img src={articleImage} alt="Article Image" />
                     )}
                 </div>
                 <div id="post-content-div">

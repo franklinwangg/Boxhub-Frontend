@@ -1,1 +1,1 @@
-post the article and image urls to the postgres table
+fix the CORS error on the image

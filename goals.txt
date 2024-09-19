@@ -1,1 +1,1 @@
-fix the CORS error on the image
+how come it's fetching correctly from the article one, but not from the images one? 

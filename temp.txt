@@ -1,40 +1,69 @@
-app.post("/api/posts/createPost", imageUpload.single("image"), async (req, res) => {
-    // 1) insert title into postgresql database, get the postId number
+    const navigate = useNavigate();
+    const [posts, setPosts] = useState([]);
+    const [post1, setPost1] = useState(null);
+    const [post2, setPost2] = useState(null);
+    const [post3, setPost3] = useState(null);
+    const [post4, setPost4] = useState(null);
+    const [post5, setPost5] = useState(null);
+    const [post6, setPost6] = useState(null);
+    const [post7, setPost7] = useState(null);
+    const [post8, setPost8] = useState(null);
+    const [remainingPosts, setRemainingPosts] = useState([])
 
-    const title = req.body.title;
-    const content = req.body.content;
-    const image = req.file;
+    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
+    const [showLogoutButton, setShowLogoutButton] = useState(false);
+    // let post1, post2, post3, post4, post5, post6;
 
-    const insertResult = await client.query("INSERT INTO posts(title) VALUES ($1) RETURNING id", [title]);
-    const postId = insertResult.rows[0].id;
 
-    // 2) Insert the image URL (from S3) into PostgreSQL
-    const imageUrl = image.location;  // S3 URL of the uploaded image
-    await client.query(
-        "UPDATE posts SET image_url = $1 WHERE id = $2",
-        [imageUrl, postId]
-    );
 
-    // 2) insert article into S3 with the postId number, get the url
-    const articleBucketName = "boxhub-articles";
+    // const [loggedIn, setLoggedIn] = useState([]);
 
-    const articleData = {
-        content: content,
-        postId: postId,
-    }
+    useEffect(() => {
+        // fetch the data
+        // display it on "recent-boxing-news"
 
-    const articleParams = {
-        Bucket: articleBucketName,
-        Key: `${postId}.json`,
-        ACL: 'bucket-owner-full-control', // Grants full control to the bucket owner
-        Body: JSON.stringify(articleData),
-        ContentType: "application/json"
-    };
+        const fetchPosts = async () => {
+            try {
 
-    // const articleS3Response = await s3.upload(articleParams).promise();
-    const articleS3Response = await s3.send(new PutObjectCommand(articleParams));
+                const fetchedPosts = await fetch("http://localhost:5000/api/posts/");
+                if (fetchedPosts.ok) {
+                    const fetchedPostsJson = await fetchedPosts.json();
 
-    // 3) insert article url into postgresql database
-    await client.query("UPDATE posts SET article_url = $1 WHERE id = $2", [articleS3Response.Location, postId]);
+                    console.log("setting posts : ");
+                    setPosts(fetchedPostsJson.rows);
+                }
+                else {
+                    console.log("fetched posts not ok");
+                }
+            }
+            catch (error) {
+                console.log("Error setting posts equal to fetched posts : ", error);
+            }
+        };
+        fetchPosts();
+    }, []);
 
-});
+        useEffect(() => {
+        console.log("Updated posts ", posts);
+
+        const tempPosts = posts.slice(-8);
+
+        console.log("posts length : ", posts.length);
+
+        if (tempPosts.length > 0) {
+            setPost1(tempPosts[tempPosts.length - 1]);
+
+        }
+        if (tempPosts.length > 1) setPost2(tempPosts[tempPosts.length - 2]);
+        if (tempPosts.length > 2) setPost3(tempPosts[tempPosts.length - 3]);
+        if (tempPosts.length > 3) setPost4(tempPosts[tempPosts.length - 4]);
+        if (tempPosts.length > 4) setPost5(tempPosts[tempPosts.length - 5]);
+        if (tempPosts.length > 5) setPost6(tempPosts[tempPosts.length - 6]);
+        if (tempPosts.length > 6) setPost7(tempPosts[tempPosts.length - 7]);
+        if (tempPosts.length > 7) setPost8(tempPosts[tempPosts.length - 8]);
+        if (posts.length > 8) {
+            setRemainingPosts(posts.slice(0, -8)); // Exclude the last 8 posts
+        }
+
+        console.log("remaining posts : ", remainingPosts);
+    }, [posts]);

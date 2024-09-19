@@ -210,8 +210,6 @@ const Post = () => {
 
             <Comment post={location.state.id} author={comment.author} comment={comment.content} level={comment.level} id={comment.id}
                 handleReplySubmission={handleReplySubmission} />
-
-
         );
     };
 
@@ -243,17 +241,22 @@ const Post = () => {
 
         setArticleContent(articleContents.content);
 
-        const response2 = await fetch(location.state.image_url);
-        console.log("LOCATION STATE URL ", location.state.image_url);
-        const articleImageBlob = await response2.blob();
-        console.log("articleImage : ", articleImage);
 
-        const articleImageUrl = URL.createObjectURL(articleImageBlob);
-
-
-        setArticleImage(articleImageUrl);
-        
-        console.log("finished");
+        try {
+            const response2 = await fetch(location.state.image_url);           
+            const articleImageBlob = await response2.blob();
+            console.log("articleImage : ", articleImage);
+    
+            const articleImageUrl = URL.createObjectURL(articleImageBlob);
+    
+    
+            setArticleImage(articleImageUrl);
+            
+            console.log("finished");
+        }
+        catch(error) {
+            console.log("Error : ", error);
+        }
     };
 
     return (
@@ -264,7 +267,7 @@ const Post = () => {
                     {articleImage == null ? (
                         <div></div>
                     ) : (
-                        <img src={articleImage} alt="Article Image" />
+                        <img id = "article-image" src={articleImage} alt="Article Image" />
                     )}
                 </div>
                 <div id="post-content-div">

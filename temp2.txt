@@ -1,60 +1,269 @@
-const express = require("express");
-const cors = require("cors");
-const userRoutes = require("./routes/userRoutes");
-const commentRoutes = require("./routes/commentRoutes");
-const postRoutes = require("./routes/postRoutes");
-const {Client} = require("pg");
-const AWS = require('aws-sdk');
-
-AWS.config.update({
-    accessKeyId: 'AKIAXGWC4PHJ2ILKVXMZ',
-    secretAccessKey: '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',
-    region: 'us-west-1'
-});
-
-const s3 = new AWS.S3();
-
-const app = express();
-
-app.use(express.json());
-
-// CORS configuration to whitelist your client
-const corsOptions = {
-    origin: 'http://localhost:3000', // Only allow requests from this origin
-    methods: ['GET,POST,PUT,DELETE'],  // Specify allowed HTTP methods
-    credentials: true                // Allow credentials (e.g., cookies, authorization headers)
-};
-
-// Initialize the PostgreSQL client
-const client = new Client({
-    user: 'franklinnnwang',
-    host: 'localhost',
-    database: 'boxhub_db',
-    password: 'strongpassword123',
-    port: 5432, // Default port for PostgreSQL
-});
-
-// Connect to the database
-client.connect()
-    .then(() => console.log('Connected to the database'))
-    .catch(err => console.error('Connection error', err.stack));
-
-app.use(cors(corsOptions));  // Apply CORS options
+import React, { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import "./Homepage.css";
+// import personIcon from "./personicon.png";
+import UserContext from '../../../context/UserContext';
+import HeaderBar from '../../Others/HeaderBar';
 
 
-app.use((req, res, next) => {
-    req.client = client;
-    req.s3 = s3;
-    next();
-});
 
-app.use("/api/users", userRoutes);
-// app.use("/api/posts", postRoutes);
-app.use("/api/comments", commentRoutes);
+function Homepage() {
+
+    const navigate = useNavigate();
+    const [posts, setPosts] = useState([]);
+    const [post1, setPost1] = useState(null);
+    const [post2, setPost2] = useState(null);
+    const [post3, setPost3] = useState(null);
+    const [post4, setPost4] = useState(null);
+    const [post5, setPost5] = useState(null);
+    const [post6, setPost6] = useState(null);
+    const [post7, setPost7] = useState(null);
+    const [post8, setPost8] = useState(null);
+
+    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
+    const [showLogoutButton, setShowLogoutButton] = useState(false);
+    // let post1, post2, post3, post4, post5, post6;
 
 
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+    // const [loggedIn, setLoggedIn] = useState([]);
+
+    useEffect(() => {
+        // fetch the data
+        // display it on "recent-boxing-news"
+
+        const fetchPosts = async () => {
+            try {
+
+                const fetchedPosts = await fetch("http://localhost:5000/api/posts/");
+                if (fetchedPosts.ok) {
+                    const fetchedPostsJson = await fetchedPosts.json();
+
+                    console.log("setting posts : ");
+                    setPosts(fetchedPostsJson.rows);
+                }
+                else {
+                    console.log("fetched posts not ok");
+                }
+            }
+            catch (error) {
+                console.log("Error setting posts equal to fetched posts : ", error);
+            }
+        };
+        fetchPosts();
+    }, []);
+
+    useEffect(() => {
+        console.log("Updated posts ", posts);
+
+        const tempPosts = posts.slice(-8);
+        if (tempPosts.length > 0) {
+            setPost1(tempPosts[0]);
+
+        }
+        if (tempPosts.length > 1) setPost2(tempPosts[1]);
+
+        if (tempPosts.length > 2) setPost3(tempPosts[2]);
+        if (tempPosts.length > 3) setPost4(tempPosts[3]);
+        if (tempPosts.length > 4) setPost5(tempPosts[4]);
+        if (tempPosts.length > 5) setPost6(tempPosts[5]);
+        if (tempPosts.length > 6) setPost7(tempPosts[6]);
+        if (tempPosts.length > 7) setPost8(tempPosts[7]);
+
+        console.log("post1 : ", post1);
+    }, [posts]);
+
+    const handleCNPPageButtonClick = async () => {
+        try {
+            navigate("/createPost");
+        } catch (error) {
+            console.error("Error during navigating to CNP page :", error);
+        }
+    };
+
+    const handleLPBClick = () => {
+        try {
+            navigate("/Login");
+        } catch (error) {
+            console.error("Error during navigating to CNP page :", error);
+        }
+    };
+
+    const openLogoutButton = () => {
+        setShowLogoutButton(true);
+    };
+
+    const logOut = () => {
+        setUsername(null);
+    };
+
+
+    // get the last 6 posts
+    return (
+        <div>
+            <button
+                id="go-to-create-new-post-page-button"
+                onClick={handleCNPPageButtonClick}
+            >
+                Create New Post
+            </button>
+
+            <h1 id="recent-boxing-news">Recent Boxing News</h1>
+
+            <div className="posts-container">
+                <div id="first-six-posts">
+                    <div id="first-three-posts">
+                        <div id="first-post">
+                            {post1 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img className="first-six-posts-post-image" src={post1.image_url} alt={post1.title} />
+
+                                    <Link
+                                        className="first-post-title"
+                                        to={`/post/${post1.id}`}
+                                        state={{ id: post1.id, title: post1.title, article_url: post1.article_url, image_url: post1.image_url }}
+                                    >
+                                        {post1.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+
+                        <div id="second-post">
+                            {post2 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img className="first-six-posts-post-image" src={post2.image_url} alt={post2.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post2.id}`}
+                                        state={{ id: post2.id, title: post2.title, article_url: post2.article_url, image_url: post2.image_url }}
+                                    >
+                                        {post2.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+
+                        <div id="third-post">
+                            {post3 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img className="first-six-posts-post-image" src={post3.image_url} alt={post3.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post3.id}`}
+                                        state={{ id: post3.id, title: post3.title, article_url: post3.article_url, image_url: post3.image_url }}
+                                    >
+                                        {post3.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                    </div>
+                    <div id="second-three-posts">
+                        <div id="fourth-post">
+                            {post4 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img className="first-six-posts-post-image" src={post4.image_url} alt={post4.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post4.id}`}
+                                        state={{ id: post4.id, title: post4.title, article_url: post4.article_url, image_url: post4.image_url }}
+                                    >
+                                        {post4.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                        <div id="fifth-post">
+                            {post5 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img className="first-six-posts-post-image" src={post5.image_url} alt={post5.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post5.id}`}
+                                        state={{ id: post5.id, title: post5.title, article_url: post5.article_url, image_url: post5.image_url }}
+                                    >
+                                        {post5.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                        <div id="sixth-post">
+                            {post6 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img id="sixth-post-image" src={post6.image_url} alt={post6.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post6.id}`}
+                                        state={{ id: post6.id, title: post6.title, article_url: post6.article_url, image_url: post6.image_url }}
+                                    >
+                                        {post6.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div id="third-two-posts">
+                        <div id="seventh-post">
+                            {post7 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img id="seventh-post-image" src={post7.image_url} alt={post7.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post7.id}`}
+                                        state={{ id: post7.id, title: post7.title, article_url: post7.article_url, image_url: post7.image_url }}
+                                    >
+                                        {post7.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                        <div id="eighth-post">
+                            {post8 ? (
+                                <div id="first-six-posts-image-and-title-wrapper">
+                                    <img id="sixth-post-image" src={post8.image_url} alt={post8.title} />
+
+                                    <Link
+                                        className="regular-post-titles"
+                                        to={`/post/${post8.id}`}
+                                        state={{ id: post8.id, title: post8.title, article_url: post8.article_url, image_url: post8.image_url }}
+                                    >
+                                        {post8.title}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+
+}
+
+export default Homepage;

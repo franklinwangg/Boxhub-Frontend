@@ -8,9 +8,8 @@ body {
 #post-title-and-content-section {
     background-color: #fff;
     padding: 20px;
-    margin: 20px auto;
+    margin: 20px 20px 20px 200px; /* Top, Right, Bottom, Left */
     max-width: 800px;
-    box-shadow: 0px 0px 10px rgba(252, 251, 251, 0.1);
     border-radius: 8px;
 }
 
@@ -23,7 +22,6 @@ body {
 
 #post-content-div {
     font-size: 18px;
-    color: #555;
     max-width: 800px; /* Limits the width of the content */
     margin: 0 auto; /* Centers the content horizontally */
     padding: 0; /* Removes padding to allow text to start on the left */
@@ -92,15 +90,7 @@ body {
     color: #333;
 }
 
-#post-title-and-content-section {
-    background-color: #f8f9fa; /* Light grey background */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin-bottom: 20px;
-    text-align: center; /* Center align the text */
-}
-
+    
 #post-title-div {
     font-size: 2rem; /* Larger font size for the title */
     font-weight: bold; /* Bold font weight */
@@ -110,7 +100,7 @@ body {
 
 #post-content-div {
     font-size: 1.2rem; /* Medium font size for the content */
-    color: #6c757d; /* Lighter grey text color */
+    color: #000000; /* Lighter grey text color */
     margin-top: 10px;
 }
   .spinner {
@@ -150,3 +140,11 @@ body {
     max-width: 800px;
     border-radius: 8px;
 }
+
+#article-image {
+    max-width: 100%;  /* Image will fit within the page width */
+    height: auto;     /* Maintain aspect ratio */
+    display: block;   /* Remove extra space */
+    margin: 0 auto;   /* Center the image */
+  }
+  

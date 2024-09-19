@@ -6,6 +6,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const { Client } = require("pg");
 const AWS = require('aws-sdk');
 const { S3, PutObjectCommand } = require('@aws-sdk/client-s3'); // For AWS SDK v3
+require('dotenv').config();  // Add this at the top of the file
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -17,10 +18,11 @@ let imageUpload = multer({ storage: multer.memoryStorage() });
 const s3 = new S3({
     region: 'us-west-1',
     credentials: {
-        accessKeyId: 'AKIAXGWC4PHJ2ILKVXMZ',
-        secretAccessKey: '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',
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 });
+
 
 const app = express();
 let postIdVar = 0;
@@ -37,11 +39,11 @@ const corsOptions = {
 
 // Initialize the PostgreSQL client
 const client = new Client({
-    user: 'franklinnnwang',
-    host: 'localhost',
-    database: 'boxhub_db',
-    password: 'strongpassword123',
-    port: 5432, // Default port for PostgreSQL
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT, // Default port for PostgreSQL
 });
 
 // Connect to the database
@@ -159,13 +161,6 @@ app.get("/api/posts/", async (req, res) => {
     }
 });
 
-app.post("/api/posts/createPost", imageUpload.single("image"), async (req, res) => {
-
-    // 1) have endpoint post into postgresql database
-    // 2) use that postId to create multer instance
-    // 3) use multer instance to post stuff to database
-
-});
 
 
 

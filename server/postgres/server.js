@@ -6,7 +6,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const { Client } = require("pg");
 const AWS = require('aws-sdk');
 const { S3, PutObjectCommand } = require('@aws-sdk/client-s3'); // For AWS SDK v3
-require('dotenv').config();  // Add this at the top of the file
+require('dotenv').config();  
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -32,9 +32,9 @@ app.use(express.json());
 
 // CORS configuration to whitelist your client
 const corsOptions = {
-    origin: 'http://localhost:3000', // Only allow requests from this origin
-    methods: ['GET,POST,PUT,DELETE'],  // Specify allowed HTTP methods
-    credentials: true                // Allow credentials (e.g., cookies, authorization headers)
+    origin: 'http://localhost:3000', 
+    methods: ['GET,POST,PUT,DELETE'],  
+    credentials: true               
 };
 
 // Initialize the PostgreSQL client

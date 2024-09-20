@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcrypt');
 
 
 // const response = await fetch(`http://localhost:3001/post/${postId}/comments`);

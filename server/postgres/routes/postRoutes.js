@@ -1,6 +1,5 @@
 // const express = require("express");
 // const router = express.Router();
-// const bcrypt = require('bcrypt');
 // const AWS = require('aws-sdk');
 // const { S3 } = require('@aws-sdk/client-s3'); // For AWS SDK v3
 

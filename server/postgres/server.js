@@ -6,7 +6,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const { Client } = require("pg");
 const AWS = require('aws-sdk');
 const { S3, PutObjectCommand } = require('@aws-sdk/client-s3'); // For AWS SDK v3
-require('dotenv').config();  
+require('dotenv').config();  // Add this at the top of the file
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');

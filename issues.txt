@@ -1,0 +1,5 @@
+how can i get my postgresql databases to work on a public internet website for cheap? is it possible 
+
+should i just host my postgresql databases from my local storage
+
+aws amplify seems to be unable to fund git submodules so it gets a 404 error and can't write cache

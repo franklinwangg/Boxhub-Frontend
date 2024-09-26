@@ -241,16 +241,17 @@ const Post = () => {
 
         setArticleContent(articleContents.content);
 
-
         try {
-            const response2 = await fetch(location.state.image_url);           
-            const articleImageBlob = await response2.blob();
-            console.log("articleImage : ", articleImage);
+            // const response2 = await fetch(location.state.image_url);
+   
+            // console.log("2");
+            // const articleImageBlob = await response2.blob();
+            // console.log("articleImage : ", articleImage);
     
-            const articleImageUrl = URL.createObjectURL(articleImageBlob);
+            // const articleImageUrl = URL.createObjectURL(articleImageBlob);
     
     
-            setArticleImage(articleImageUrl);
+            // setArticleImage(articleImageUrl);
             
             console.log("finished");
         }
@@ -267,7 +268,10 @@ const Post = () => {
                     {articleImage == null ? (
                         <div></div>
                     ) : (
-                        <img id = "article-image" src={articleImage} alt="Article Image" />
+                        // <img id = "article-image" src={articleImage} alt="Article Image" />
+
+                        <img id="article-image" src={location.state.image_url} alt={location.state.title} />
+
                     )}
                 </div>
                 <div id="post-content-div">

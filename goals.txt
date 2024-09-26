@@ -1,1 +1,1 @@
-how come it's fetching correctly from the article one, but not from the images one? 
+the first post goes in 1, second goes in 2, etc

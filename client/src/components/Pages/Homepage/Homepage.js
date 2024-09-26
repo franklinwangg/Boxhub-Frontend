@@ -37,11 +37,10 @@ function Homepage() {
         const fetchPosts = async () => {
             try {
 
-                const fetchedPosts = await fetch("http://localhost:5000/api/posts/");
+                const fetchedPosts = await fetch("http://localhost:5000/api/posts/"); 
                 if (fetchedPosts.ok) {
                     const fetchedPostsJson = await fetchedPosts.json();
 
-                    console.log("setting posts : ");
                     setPosts(fetchedPostsJson.rows);
                 }
                 else {
@@ -53,32 +52,44 @@ function Homepage() {
             }
         };
         fetchPosts();
-        console.log("POSTS : ", posts);
     }, []);
 
     useEffect(() => {
-        console.log("Updated posts ", posts);
 
+        console.log("POSTS : ", posts);
         const tempPosts = posts.slice(-8);
+        console.log("tempPosts 1 : ", tempPosts[0]);
+        console.log("tempPosts 2 : ", tempPosts[1]);
 
-        console.log("posts length : ", posts.length);
 
         if (tempPosts.length > 0) {
-            setPost1(tempPosts[0]);
+            console.log("tempPosts 1");
+            // setPost1(tempPosts[0]);
+            setPost1(tempPosts[tempPosts.length - 1]);
+
 
         }
-        if (tempPosts.length > 1) setPost2(tempPosts[1]);
-        if (tempPosts.length > 2) setPost3(tempPosts[2]);
-        if (tempPosts.length > 3) setPost4(tempPosts[3]);
-        if (tempPosts.length > 4) setPost5(tempPosts[4]);
-        if (tempPosts.length > 5) setPost6(tempPosts[5]);
-        if (tempPosts.length > 6) setPost7(tempPosts[6]);
-        if (tempPosts.length > 7) setPost8(tempPosts[7]);
+        // if (tempPosts.length > 1) setPost2(tempPosts[1]);
+        // if (tempPosts.length > 2) setPost3(tempPosts[2]);
+        // if (tempPosts.length > 3) setPost4(tempPosts[3]);
+        // if (tempPosts.length > 4) setPost5(tempPosts[4]);
+        // if (tempPosts.length > 5) setPost6(tempPosts[5]);
+        // if (tempPosts.length > 6) setPost7(tempPosts[6]);
+        // if (tempPosts.length > 7) setPost8(tempPosts[7]);
+        // if (posts.length > 8) {
+        //     setRemainingPosts(posts.slice(0, -8)); // Exclude the last 8 posts
+        // }
+
+        if (tempPosts.length > 1) setPost2(tempPosts[tempPosts.length - 2]);
+        if (tempPosts.length > 2) setPost3(tempPosts[tempPosts.length - 3]);
+        if (tempPosts.length > 3) setPost4(tempPosts[tempPosts.length - 4]);
+        if (tempPosts.length > 4) setPost5(tempPosts[tempPosts.length - 5]);
+        if (tempPosts.length > 5) setPost6(tempPosts[tempPosts.length - 6]);
+        if (tempPosts.length > 6) setPost7(tempPosts[tempPosts.length - 7]);
+        if (tempPosts.length > 7) setPost8(tempPosts[tempPosts.length - 8]);
         if (posts.length > 8) {
             setRemainingPosts(posts.slice(0, -8)); // Exclude the last 8 posts
         }
-
-        console.log("remaining posts : ", remainingPosts);
     }, [posts]);
 
 

@@ -1,1 +1,1 @@
-the first post goes in 1, second goes in 2, etc
+make it fetch posts

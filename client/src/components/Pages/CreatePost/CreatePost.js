@@ -25,7 +25,6 @@ function CreatePost() {
     const handleCreatePostButtonClick = async () => {
         // two fetch methods?
         // first fetch method 1) sends in the title and content to database, 2) initializes the multer instance
-        console.log("starteD");
         await fetch("http://localhost:5000/api/posts/createPostTitleAndContent", {
             method: "POST",
             headers: {

@@ -37,7 +37,9 @@ function Homepage() {
         const fetchPosts = async () => {
             try {
 
-                const fetchedPosts = await fetch("http://localhost:5000/api/posts/"); 
+                // const fetchedPosts = await fetch("http://localhost:5000/api/posts/"); //https://boxhub-backend.vercel.app/api/posts
+                const fetchedPosts = await fetch("https://boxhub-backend.vercel.app/api/posts/"); 
+
                 if (fetchedPosts.ok) {
                     const fetchedPostsJson = await fetchedPosts.json();
 
